@@ -55,6 +55,10 @@ app.post('/todos/delete', function(req, res){
 
   if(ids.length === 0) {
     return res.status(400).send();
+  } else if(_.isNumber(ids)) {
+    var aux = ids;
+    ids = [];
+    ids.push(aux);
   }
 
   var matchedTodos= [];
