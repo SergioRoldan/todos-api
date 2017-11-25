@@ -104,6 +104,35 @@ app.post('/todos/delete', function(req, res){
   var body = _.pick(req.body, 'ids');
   var ids = body.ids;
 
+  console.log(ids);
+
+  if(ids.length === 0 || typeof ids === "undefined") {
+    return res.status(400).send();
+  } else if(_.isNumber(ids)) {
+    var aux = ids;
+    ids = [];
+    ids.push(aux);
+  }
+
+  db.todo.destroy({
+    where: {
+      id: {
+        [db.Sequelize.Op.or]: ids
+      }
+    }
+  }).then(function (rowsDeleted) {
+      if(rowsDeleted === 0) {
+        res.status(404).json({
+          error: 'No todo with id'
+        });
+      } else {
+        res.status(200).json(rowsDeleted);
+      }
+  }, function() {
+    res.status(500).send();
+  });
+  
+  /*
   if(ids.length === 0) {
     return res.status(400).send();
   } else if(_.isNumber(ids)) {
@@ -130,7 +159,7 @@ app.post('/todos/delete', function(req, res){
     todos = _.without(todos, matchedTodos[i]);
   }
 
-  res.json(todos);
+  res.json(todos);*/
 });
 
 app.post('/todos/:id', function(req, res) {
