@@ -8,6 +8,7 @@ var PORT = process.env.PORT || 8080;
 var todoNextId = 1;
 var todos = [];
 
+
 app.use(bodyParser.json());
 
 app.get('/', function(req, res){
@@ -39,13 +40,43 @@ app.post('/todos', function(req, res){
     return res.status(400).send();
   }
 
-
   body.description = body.description.trim();
 
   body.id = todoNextId++;
   todos.push(body);
 
   res.json(body);
+});
+
+app.post('/todos/delete', function(req, res){
+
+  var body = _.pick(req.body, 'ids');
+  var ids = body.ids;
+
+  if(ids.length === 0) {
+    return res.status(400).send();
+  }
+
+  var matchedTodos= [];
+
+  for(var i=0 ; i<ids.length; i++) {
+    var todoId = parseInt(ids[i], 10);
+    var matchedTodo = _.findWhere(todos, {id: todoId});
+    if (matchedTodo) {
+      matchedTodos.push(matchedTodo);
+    }
+  }
+
+  if(matchedTodos.length === 0) {
+    return res.status(404).json({"error": "No todo found with that ids"});
+  }
+
+  for(var i=0 ; i<matchedTodos.length; i++) {
+    todos = _.without(todos, matchedTodos[i]);
+  }
+
+  res.json(todos);
+
 });
 
 app.listen(PORT, function(){
