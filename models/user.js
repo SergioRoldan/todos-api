@@ -41,15 +41,9 @@ module.exports = function (sequelize, DataTypes) {
           }
         }
     },
-    instanceMethods: {
-        toPublicJSON: function() {
-          var json = this.toJSON();
-          return _.pick(json, 'id', 'email', 'createdAt', 'updatedAt');
-        }
-    },
     classMethods: {
         authenticate: function(body) {
-          return new Promise(function (resolve, reject) {
+          return new Promise(function(resolve, reject) {
               if(!_.isString(body.email) || !_.isString(body.password)) {
                 return reject();
               }
@@ -68,6 +62,12 @@ module.exports = function (sequelize, DataTypes) {
                 reject();
               });
           });
+        }
+    },
+    instanceMethods: {
+        toPublicJSON: function() {
+          var json = this.toJSON();
+          return _.pick(json, 'id', 'email', 'createdAt', 'updatedAt');
         }
     }
   });
