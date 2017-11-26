@@ -204,6 +204,16 @@ app.post('/users', function(req, res) {
 
 });
 
+app.post('/users/login', function() {
+  var body = _.pick(req.body, 'email', 'password');
+
+  if(!_.isString(body.email) || !_.isString(body.password)) {
+    return res.status(400).send();
+  }
+
+
+});
+
 db.sequelize.sync(/*{force: true}*/).then(function() {
   app.listen(PORT, function(){
      console.log("Express listening on the port " + PORT);
